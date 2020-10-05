@@ -104,8 +104,13 @@ d3.csv("hairData.csv").then(function(hairData, err) {
     data.num_albums = +data.num_albums;
   });
 
+  console.log(hairData) 
+
   // xLinearScale function above csv import
   var xLinearScale = xScale(hairData, chosenXAxis);
+
+console.log(xLinearScale)
+
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
@@ -136,6 +141,13 @@ d3.csv("hairData.csv").then(function(hairData, err) {
     .attr("r", 20)
     .attr("fill", "pink")
     .attr("opacity", ".5");
+
+    console.log("AA  " + hairData.poverty);
+console.log("BB  " + hairData.obesity);
+
+console.log(chosenXAxis);
+console.log(circlesGroup);
+ 
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
