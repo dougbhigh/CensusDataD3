@@ -1,9 +1,12 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////
-// RUT-SOM-DATA-PT-06-2020-U-C                                                    Douglas High //
-// D3-Challenge                                                                October 5, 2020 //
-//      >app.js                                                                                //
-//   - 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// RUT-SOM-DATA-PT-06-2020-U-C                                                     Douglas High //
+// D3-Challenge                                                                 October 5, 2020 //
+//      >app.js                                                                                 //
+//   - create scatterplot with circles using d3 svg, x and y axes are user driven variables.    //
+//   - data points (circles) are states, tooltip popup displays current axes data.              //
+//   - gridcomment: gridlines created upon initial load and transition off when their axis      //
+//           changes, however they do not render with new values, so processing is commented.   //
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 //00       SVG Setup                                                         //
@@ -62,10 +65,14 @@ function yScale(dataIn, chosenYAxis) {
 //02      render* functions                                                               //
 //   a- *XAxis- transition x axis values placement from previous data range.              //
 //   b- *YAxis- as above for y axis.                                                      //
-//   c- *CirclesXAxis- transition circle movement from previous grouping across x axis.   //
-//   d- *CirclesYAxis- as above for y axis.                                               //
-//   e- *TextXAxis- transition text within circles movement across x axis.                //
-//   f- *TextYAxis- as above for y axis.                                                  //
+//   c- *XGridlines- transition horizontal gridlines to new tick locations.               //
+//   d- *YGridlines- as above for vertical gridlines.                                     //
+//        note- after left axis change, tick marks and values turn green, perhaps since   //
+//        leftAXis and leftGridline both call d3.axisLeft, can we change tick color?      //
+//   e- *CirclesXAxis- transition circle movement from previous grouping across x axis.   //
+//   f- *CirclesYAxis- as above for y axis.                                               //
+//   g- *TextXAxis- transition text within circles movement across x axis.                //
+//   h- *TextYAxis- as above for y axis.                                                  //
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 //a
@@ -84,53 +91,52 @@ function renderYAxis(newYScale, yAxis) {
     .call(leftAxis);
   return yAxis;
 }
+//gridcomment
+// //c
+// function renderXGrid(newXScale, xGrid) {
+//   var xGridlines = d3.axisTop(newXScale);
+//   xGrid.transition()
+//     .duration(1000)
+//     .call(xGridlines);
+//   return xGrid;
+// }
+// //d
+// function renderYGrid(newYScale, yGrid) {
+//   var yGridlines = d3.axisLeft(newYScale);
+//   yGrid.transition()
+//     .duration(1000)
+//     .call(yGridlines);
+//   return yGrid;
+// }
 
-//xxx
-function renderXGrid(newXScale, xGrid) {
-  var xGridlines = d3.axisTop(newXScale);
-  xGrid.transition()
-    .duration(1000)
-    .call(xGridlines);
-  return xGrid;
-}
-//yyy
-function renderYGrid(newYScale, yGrid) {
-  var yGridlines = d3.axisLeft(newYScale);
-  yGrid.transition()
-    .duration(1000)
-    .call(yGridlines);
-  return yGrid;
-}
-
-//c
+//e
 function renderCirclesXAxis(circlesGroup, newXScale, chosenXAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
   return circlesGroup;
 }
-//d
+//f
 function renderCirclesYAxis(circlesGroup, newYScale, chosenYAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cy", d => newYScale(d[chosenYAxis]));
   return circlesGroup;
 }
-//e
+//g
 function renderTextXAxis(textGroup, newXScale, chosenXAxis) {
   textGroup.transition()
     .duration(1000)
     .attr("x", d => newXScale(d[chosenXAxis]))
   return textGroup;
 }
-//f
+//h
 function renderTextYAxis(textGroup, newYScale, chosenYAxis) {
   textGroup.transition()
     .duration(1000)
     .attr("y", d => newYScale(d[chosenYAxis])+3)  // ?, why the offset?
   return textGroup;
 }
-
 ///////////////////////////////////////////////////////////////////////
 //03      updateToopTip function                                     //
 //   a- create and set labelX and labelY based on chosen data.       //
@@ -179,7 +185,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 //   b- generate linear scales and axes, append axes, circles, and circle text to chartGroup.   //
 //   c- generate tooltip popup on mouseover.                                                    //
 //10.1- x-axis labels.                                                                          //
-//10.2- x-axis labels.                                                                          //
+//10.2- y-axis labels.                                                                          //
 //10.3- x-axis label event listener.                                                            //
 //10.4- y-axis label event listener.                                                            //
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,8 +208,9 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
   var yLinearScale = yScale(dataIn, chosenYAxis);
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
-  var xGridlines = d3.axisTop(xLinearScale).tickFormat("").tickSize(-height).scale(xLinearScale);
-  var yGridlines = d3.axisLeft(yLinearScale).tickFormat("").tickSize(-width).scale(yLinearScale);
+  //gridcomment
+  // var xGridlines = d3.axisTop(xLinearScale).tickFormat("").tickSize(-height).scale(xLinearScale);
+  // var yGridlines = d3.axisLeft(yLinearScale).tickFormat("").tickSize(-width).scale(yLinearScale);
 
   var xAxis = chartGroup.append("g").classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
@@ -212,11 +219,14 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
   var yAxis = chartGroup.append("g").classed("y-axis", true)
     .call(leftAxis);
 
-  var xGrid = chartGroup.append("g").attr("class", "grid")
-    .call(xGridlines);
+  //gridcomment
+  // var xGrid = chartGroup.append("g").attr("class", "grid")
+  //   .attr("opacity", ".4").attr("color", "green")
+  //   .call(xGridlines);
 
-  var yGrid = chartGroup.append("g").attr("class", "grid")
-    .call(yGridlines);
+  // var yGrid = chartGroup.append("g").attr("class", "grid")
+  //   .attr("opacity", ".4").attr("color", "green")
+  //   .call(yGridlines);
  
   var circlesGroup = chartGroup.selectAll("circle")
     .data(dataIn).enter().append("circle").attr("r", 10)
@@ -235,7 +245,7 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
   
   ////////////////////////////////////////////////////
   //10.1     x-axis labels                          //
-  //   - create chartGroup tag for x axis labels.   //
+  //   - create group tag for x axis labels.        //
   //   - append text for each x axis user option.   //
   ////////////////////////////////////////////////////
   var labelsGroupX = chartGroup.append("g").attr("x", 0)
@@ -258,15 +268,14 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
     .attr("value", "income") // value to grab for event listener
     .classed("inactive", true)
     .text("Household Income (Median)");
+
   ////////////////////////////////////////////////////
   //10.2     y-axis labels                          //
-  //   - create chartGroup tag for y axis labels.   //
+  //   - create group tag for y axis labels.        //
   //   - append text for each y axis user option.   //
   ////////////////////////////////////////////////////
-//
   var labelsGroupY = chartGroup.append("g").attr("x",  (height / 2))
-    .attr("transform", `translate(0, ${height / 2})`)
-    ;
+    .attr("transform", `translate(0, ${height / 2})`);
 
   var smokesLabel = labelsGroupY.append("text")
     .attr("y", -margin.left)
@@ -298,19 +307,18 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
   //   b- change axis mapping variables, transition their change.   //
   //   c- highlight chosen x axis label.                            //
   ////////////////////////////////////////////////////////////////////
-  
   labelsGroupX.selectAll("text")
     .on("click", function() {
       //a
       var value = d3.select(this).attr("value");
 
       if (value !== chosenXAxis) {
-
         //b 
         chosenXAxis = value;
         xLinearScale = xScale(dataIn, chosenXAxis);
         xAxis = renderXAxis(xLinearScale, xAxis);
-        xGrid = renderXGrid(xLinearScale, xGrid);
+        //gridcomment
+        // xGrid = renderXGrid(xLinearScale, xGrid);
         circlesGroup = renderCirclesXAxis(circlesGroup, xLinearScale, chosenXAxis);
         textGroup = renderTextXAxis(textGroup, xLinearScale, chosenXAxis);
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
@@ -335,26 +343,24 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
         }
       }
     });
-
   ////////////////////////////////////////////////////////////////////
   //10.4     y-axis label event listener                            //
   //   a- get value of selection, process if not new value.         //
   //   b- change axis mapping variables, transition their change.   //
   //   c- highlight chosen y axis label.                            //
   ////////////////////////////////////////////////////////////////////
-  
   labelsGroupY.selectAll("text")
     .on("click", function() {
       //a
       var value = d3.select(this).attr("value");
 
       if (value !== chosenYAxis) {
-
         //b 
         chosenYAxis = value;
         yLinearScale = yScale(dataIn, chosenYAxis);
         yAxis = renderYAxis(yLinearScale, yAxis);
-        yGrid = renderYGrid(yLinearScale, yGrid);
+        //gridcomment
+        // yGrid = renderYGrid(yLinearScale, yGrid);
         circlesGroup = renderCirclesYAxis(circlesGroup, yLinearScale, chosenYAxis);
         textGroup = renderTextYAxis(textGroup, yLinearScale, chosenYAxis);
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
@@ -383,30 +389,3 @@ d3.csv("assets/data/data.csv").then(function(dataIn, err) {
 }).catch(function(error) {
   console.log(error);
 });
-
-
-
-
-//////    MODIFY TO CHANGE FOOTER IN HTML     
-// var complexData = [{
-//   title: "javascript",
-//   url: "https://media.giphy.com/media/10bdAP4IOmoN7G/giphy.gif"
-// },
-// {
-//   title: "python",
-//   url: "https://media.giphy.com/media/2yP1jNgjNAkvu/giphy.gif"
-// },
-// {
-//   title: "css",
-//   url: "https://media.giphy.com/media/TsxMkIKHpvFaU/giphy.gif"
-// }
-// ];
-
-// d3.select(".img-gallery").selectAll("div")
-//   .data(complexData)
-//   .enter() // creates placeholder for new data
-//   .append("div") // appends a div to placeholder
-//   .classed("col-md-4 thumbnail", true) // sets the class of the new div
-//   .html(function(d) {
-//     return `<img src="${d.url}">`;
-//   }); // sets the html in the div to an image tag with the link
