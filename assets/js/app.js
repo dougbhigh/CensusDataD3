@@ -1,11 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // RUT-SOM-DATA-PT-06-2020-U-C                                                     Douglas High //
-// D3-Challenge                                                                 October 5, 2020 //
+// D3-Challenge                                                                  October 5, 2020 //
 //      >app.js                                                                                 //
 //   - create scatterplot with circles using d3 svg, x and y axes are user driven variables.    //
 //   - data points (circles) are states, tooltip popup displays current axes data.              //
 //   - gridcomment: gridlines created upon initial load and transition off when their axis      //
 //           changes, however they do not render with new values, so processing is commented.   //
+//  *- 5/2021 - git repo and local folder name changed to CensusDataD3, no code changes made.   //
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
