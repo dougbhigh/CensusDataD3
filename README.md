@@ -1,4 +1,4 @@
-# Census Health scatterplot
+# Census Data Health scatterplot
  
 Based on 2014 US Census Bureau data
 
